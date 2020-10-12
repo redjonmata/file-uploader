@@ -58,3 +58,34 @@ const getUserDocument = async uid => {
         console.error("Error fetching user", error);
     }
 };
+
+export const getLocationDocument = async uid => {
+    if (!uid) return null;
+    try {
+        const locationDocument = await firestore.doc(`locations/${uid}`).get();
+
+        return {
+            uid,
+            ...locationDocument.data()
+        };
+    } catch (error) {
+        console.error("Error fetching location", error);
+    }
+};
+
+export const generateLocationDocument = async (additionalData) => {
+
+    const locRef = firestore.doc(`locations`).getId();
+    const snapshot = await locRef.get();
+
+    if (!snapshot.exists) {
+        try {
+            await locRef.set({
+                ...additionalData
+            });
+        } catch (error) {
+            console.error("Error creating location document", error);
+        }
+    }
+    return getLocationDocument(locRef.uid);
+};
