@@ -1,23 +1,22 @@
-import React, { useState, useContext } from "react";
-import {auth, generateLocationDocument, signInWithGoogle} from "../firebase";
-import {Link} from "@reach/router";
+import React, { useState } from "react";
+import { generateLocationDocument } from "../firebase";
 
 const Locations = () => {
     const [title, setTitle] = useState('');
     const [subtitle, setSubtitle] = useState('');
     const [description, setDescription] = useState('');
-    const [location, setLocation] = useState('');
+    const [loc, setLocation] = useState('');
     const [images, setImages] = useState('');
     const [error, setError] = useState(null);
 
-    const createLocationHandler = async (event) => {
+    const createLocationHandler = async (event, title, subtitle, description, loc) => {
         event.preventDefault();
         try{
             var location = {
                 title: title,
                 subtitle: subtitle,
                 description: description,
-                location: location
+                location: loc
             }
 
             await generateLocationDocument(location);
@@ -41,7 +40,7 @@ const Locations = () => {
             setSubtitle(value);
         } else if (name === 'description') {
             setDescription(value);
-        } else if (name === 'location') {
+        } else if (name === 'loc') {
             setLocation(value);
         } else if (name === 'images') {
             setImages(value);
@@ -50,7 +49,7 @@ const Locations = () => {
 
     return(
         <div className="mt-8">
-            <h1 className="text-3xl mb-2 text-center font-bold">Sign In</h1>
+            <h1 className="text-3xl mb-2 text-center font-bold">Add location</h1>
             <div className="border border-blue-400 mx-auto w-11/12 md:w-2/4 rounded py-8 px-4 md:px-8">
                 {error !== null && <div className = "py-4 bg-red-600 w-full text-white text-center mb-3">{error}</div>}
                 <form className="">
@@ -90,16 +89,16 @@ const Locations = () => {
                         id="description"
                         onChange = {(event) => onChangeHandler(event)}
                     />
-                    <label htmlFor="location" className="block">
+                    <label htmlFor="loc" className="block">
                         Location:
                     </label>
                     <input
                         type="text"
                         className="my-1 p-1 w-full"
-                        name="location"
-                        value = {location}
+                        name="loc"
+                        value = {loc}
                         placeholder="Location"
-                        id="description"
+                        id="loc"
                         onChange = {(event) => onChangeHandler(event)}
                     />
                     {/*<label htmlFor="title" className="block">*/}
@@ -114,7 +113,7 @@ const Locations = () => {
                     {/*    id="title"*/}
                     {/*    onChange = {(event) => onChangeHandler(event)}*/}
                     {/*/>*/}
-                    <button className="bg-green-400 hover:bg-green-500 w-full py-2 text-white" onClick = {(event) => {generateLocationDocument(event, title, subtitle, description, location)}}>
+                    <button className="bg-green-400 hover:bg-green-500 w-full py-2 text-white" onClick = {(event) => {createLocationHandler(event, title, subtitle, description, loc)}}>
                         Add location
                     </button>
                 </form>

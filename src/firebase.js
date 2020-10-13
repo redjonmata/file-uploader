@@ -1,7 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import { functions } from "firebase";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBQ7X_uhl4eYIQ_ltrSdwt2GZKo_ntXhCk",
@@ -19,6 +18,7 @@ export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
 const provider = new firebase.auth.GoogleAuthProvider();
+
 export const signInWithGoogle = () => {
     auth.signInWithPopup(provider);
 };
@@ -75,17 +75,14 @@ export const getLocationDocument = async uid => {
 
 export const generateLocationDocument = async (additionalData) => {
 
-    const locRef = firestore.doc(`locations`).getId();
-    const snapshot = await locRef.get();
+    const locRef = firestore.collection(`locations`);
 
-    if (!snapshot.exists) {
-        try {
-            await locRef.set({
-                ...additionalData
-            });
-        } catch (error) {
-            console.error("Error creating location document", error);
-        }
+    try {
+        await locRef.add({
+            ...additionalData
+        });
+    } catch (error) {
+        console.error("Error creating location document", error);
     }
     return getLocationDocument(locRef.uid);
 };
